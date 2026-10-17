@@ -39,19 +39,19 @@
 
 ```mermaid
 flowchart TB
-    User["사용자 · 의료 및 방역 실무자"] --> Web["React · Vite 웹 화면"]
+    User["사용자 · 실무자"] --> Web["React · Vite"]
     Admin["관리자"] --> Web
-    Web <-->|"HTTP · SSE"| Proxy["Nginx · API 프록시"]
+    Web <-->|"HTTP · SSE"| Proxy["Nginx"]
     Proxy <--> API["FastAPI"]
 
-    API --> Triage["규칙 기반 초기 분류 · 문진 안내"]
+    API --> Triage["초기 분류·문진"]
     Triage -->|"선행 이벤트"| Web
-    API --> RAG["RAG 검색 · 문맥 구성 / LangChain"]
-    RAG <-->|"지침 검색"| Search["Jina 로컬 임베딩 · Qdrant"]
-    RAG -->|"질문 · 검색 문맥"| LLM["Gemini API / 외부 서비스"]
+    API --> RAG["RAG · LangChain"]
+    RAG <-->|"지침 검색"| Search["Jina · Qdrant"]
+    RAG -->|"질문 · 검색 문맥"| LLM["Gemini API<br/>외부 서비스"]
     LLM -->|"답변 스트림"| API
-    API <--> Conversation[("SQLite / 대화 문맥")]
-    API -->|"관리자 지침 업로드"| Parse["문서 파싱 · 청킹"]
+    API <--> Conversation[("SQLite<br/>대화 문맥")]
+    API -->|"지침 업로드"| Parse["문서 파싱·청킹"]
     Parse -->|"임베딩 · 색인"| Search
 
     classDef web fill:#edf5ff,stroke:#4d7aaa,color:#102a43
