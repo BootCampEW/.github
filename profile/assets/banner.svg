@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="title desc">
+  <title id="title">BootCampEW — Infection QA</title>
+  <desc id="desc">Guideline search, evidence review, and clinical decision support research.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b172b"/>
+      <stop offset="1" stop-color="#123c48"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#53e0c5"/>
+      <stop offset="1" stop-color="#80b9ff"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#a8dbef" stroke-opacity=".055"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="320" rx="20" fill="url(#bg)"/>
+  <rect width="1280" height="320" rx="20" fill="url(#grid)"/>
+  <rect x="48" y="44" width="4" height="22" rx="2" fill="#53e0c5"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="65" y="61" fill="#a9c5d3" font-size="16" font-weight="700" letter-spacing="3">BOOTCAMPEW</text>
+    <text x="48" y="145" fill="#f4f9ff" font-size="66" font-weight="700" letter-spacing="-2">Infection QA</text>
+    <text x="51" y="187" fill="#bad1de" font-size="21">Guidelines into context. Evidence for better decisions.</text>
+    <g font-size="13" font-weight="700" letter-spacing="1.5" fill="#bff6ea">
+      <rect x="50" y="230" width="79" height="30" rx="15" fill="#ffffff" fill-opacity=".07" stroke="#ffffff" stroke-opacity=".12"/>
+      <text x="89" y="250" text-anchor="middle">RAG</text>
+      <rect x="140" y="230" width="91" height="30" rx="15" fill="#ffffff" fill-opacity=".07" stroke="#ffffff" stroke-opacity=".12"/>
+      <text x="185" y="250" text-anchor="middle">CDSS</text>
+      <rect x="242" y="230" width="219" height="30" rx="15" fill="#ffffff" fill-opacity=".07" stroke="#ffffff" stroke-opacity=".12"/>
+      <text x="351" y="250" text-anchor="middle">GUIDELINE SEARCH</text>
+    </g>
+    <g transform="translate(905 42)">
+      <circle cx="141" cy="117" r="108" fill="none" stroke="#7ed9d2" stroke-opacity=".12"/>
+      <circle cx="141" cy="117" r="80" fill="none" stroke="#7ed9d2" stroke-opacity=".12" stroke-dasharray="4 8"/>
+      <path d="M20 112H82M200 112H259M141 29V64M141 164V215" fill="none" stroke="url(#accent)" stroke-width="2" stroke-opacity=".65"/>
+      <rect x="80" y="57" width="122" height="119" rx="20" fill="#123b4b" stroke="#68e1cf" stroke-opacity=".65"/>
+      <path d="M122 80H145L163 98V151H119V80Z" fill="#c7f6ed" fill-opacity=".09" stroke="#a4e8e2" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M145 81V99H162M129 114H152M129 125H146M129 136H151" fill="none" stroke="#a4e8e2" stroke-width="2" stroke-linecap="round"/>
+      <g fill="#b8f2e5">
+        <circle cx="20" cy="112" r="6"/>
+        <circle cx="259" cy="112" r="6"/>
+        <circle cx="141" cy="29" r="5"/>
+        <circle cx="141" cy="215" r="5"/>
+      </g>
+      <circle cx="179" cy="152" r="21" fill="#53e0c5"/>
+      <path d="M170 152L177 159L189 146" fill="none" stroke="#0b2737" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>
