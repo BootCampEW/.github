@@ -87,6 +87,7 @@ flowchart TB
 | **Backend (BE)** | 김지우, 장재원 |
 | **Frontend (FE)** | 라현준, 전서영 |
 | **Project Manager (PM)** | 장재원 |
+| **멘토** | 홍성석 |
 
 ## 코드 저장소
 
