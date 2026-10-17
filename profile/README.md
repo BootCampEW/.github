@@ -8,13 +8,15 @@
 
 `React` · `FastAPI` · `LangChain` · `Jina Embeddings` · `Qdrant` · `Gemini`
 
-[프로젝트 소개](#프로젝트-소개) · [주요 기능](#주요-기능) · [아키텍처](#시스템-아키텍처) · [저장소](#코드-저장소) · [문서](#문서-구조) · [로드맵](#향후-과제)
+[프로젝트 소개](#프로젝트-소개) · [주요 기능](#주요-기능) · [아키텍처](#시스템-아키텍처) · [팀 구성](#팀-구성) · [저장소](#코드-저장소) · [문서](#문서-구조) · [로드맵](#향후-과제)
 
 </div>
 
 ---
 
 ## 프로젝트 소개
+
+**본 프로젝트는 [부산광역시 감염병관리지원단](https://www.busancidc.or.kr/)의 의뢰를 받아 제작되었습니다.**
 
 **Infection QA**는 법정감염병과 감염관리 지침을 검색하고, 질문의 문맥과 검색 근거를 결합해 답변을 제공하는 웹 애플리케이션입니다. 범용 감염병 챗봇에서 출발해 의료·방역 실무자의 지침 확인과 정보 탐색을 지원하는 **CDSS(Clinical Decision Support System) 참고 도구**로 발전하고 있습니다.
 
@@ -77,6 +79,14 @@ flowchart TB
 | **검색·AI** | LangChain, Jina Embeddings, Sentence Transformers, PyTorch, Qdrant, Gemini API |
 | **데이터·문서** | SQLite, JSON, PDF·HWPX·TXT·Markdown 처리 |
 | **실행·품질 관리** | Docker Compose, Nginx, pytest, GitHub Actions |
+
+## 팀 구성
+
+| 역할 | 담당 |
+| :--- | :--- |
+| **Backend (BE)** | 김지우, 장재원 |
+| **Frontend (FE)** | 라현준, 전서영 |
+| **Project Manager (PM)** | 장재원 |
 
 ## 코드 저장소
 
