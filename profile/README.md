@@ -1,84 +1,119 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/BootCampEW/.github/main/profile/assets/banner.svg" alt="BootCampEW · Infection QA — 지침을 찾고, 근거를 확인하고, 판단을 지원합니다." width="100%" />
+<img src="https://raw.githubusercontent.com/BootCampEW/.github/main/profile/assets/banner.svg" alt="BootCampEW · Infection QA" width="100%" />
 
-# 법정감염병 지침 검색 · 임상 의사결정 참고 시스템
+# Infection QA
+### 법정감염병 지침 검색 · 정보 안내 서비스
 
 **2026-2 국립부경대학교 AI 부트캠프 · BootCampEW**
 
-`React` · `FastAPI` · `LangChain` · `Jina Embeddings` · `Qdrant` · `Gemini`
+**[서비스 열기 · Visit Website](https://outboard-retrieval-aqueduct.ngrok-free.dev/)**
 
-[프로젝트 소개](#프로젝트-소개) · [주요 기능](#주요-기능) · [아키텍처](#시스템-아키텍처) · [팀 구성](#팀-구성) · [저장소](#코드-저장소) · [문서](#문서-구조) · [로드맵](#향후-과제)
+`React` · `FastAPI` · `LangChain` · `Jina Embeddings` · `Qdrant` · `SQLite` · `Gemini`
+
+[프로젝트 소개](#프로젝트-소개) · [주요 기능](#주요-기능) · [시스템 아키텍처](#시스템-아키텍처) · [기술 스택](#기술-스택) · [팀 구성](#팀-구성) · [저장소와 문서](#저장소와-문서) · [향후 과제](#향후-과제)
 
 </div>
 
----
-
 ## 프로젝트 소개
 
-**본 프로젝트는 [부산광역시 감염병관리지원단](https://www.busancidc.or.kr/)의 의뢰를 받아 제작되었습니다.**
+본 프로젝트는 **[부산광역시 감염병관리지원단](https://www.busancidc.or.kr/)**의 의뢰를 받아 제작되었습니다.
 
-**Infection QA**는 법정감염병과 감염관리 지침을 검색하고, 질문의 문맥과 검색 근거를 결합해 답변을 제공하는 웹 애플리케이션입니다. 범용 감염병 챗봇에서 출발해 의료·방역 실무자의 지침 확인과 정보 탐색을 지원하는 **CDSS(Clinical Decision Support System) 참고 도구**로 발전하고 있습니다.
+**Infection QA**는 법정감염병과 감염관리 지침을 검색하고, 사용자의 질문에 맞춰 관련 정보를 안내하는 웹 서비스입니다. 지침 검색에 RAG(Retrieval-Augmented Generation)를 활용하며, 최근 대화 문맥을 반영한 후속 질문과 관리자 지침 업로드를 지원합니다.
 
-지침 문서를 검색하는 RAG(Retrieval-Augmented Generation)와 초기 분류 안내를 결합해, 사용자가 관련 정보와 추가 확인 항목을 함께 살펴볼 수 있도록 설계했습니다.
+> 감염병 정보를 알려주는 참고 서비스입니다. 진단·처방이나 의료진의 판단을 대신하지 않습니다. 질문에는 개인을 식별할 수 있는 정보를 입력하지 마세요.
 
-> **의료적 참고를 위한 개발 프로젝트입니다.** 확정 진단·처방이나 의료진의 최종 판단을 대체하지 않습니다. 질문에 환자·개인을 식별할 수 있는 정보를 입력하지 마세요.
+## 서비스 이용
+
+**[https://outboard-retrieval-aqueduct.ngrok-free.dev/](https://outboard-retrieval-aqueduct.ngrok-free.dev/)**
+
+처음 접속할 때 ngrok 안내 화면이 나타나면 **Visit Site**를 선택하면 됩니다. ngrok 터널과 서비스가 실행 중일 때 이용할 수 있습니다.
 
 ## 주요 기능
 
-| 기능 | 제공 내용 |
+| 기능 | 구현 내용 |
 | :--- | :--- |
-| **지침 기반 질의응답** | 로컬 Jina 임베딩과 Qdrant로 관련 지침을 검색하고, Gemini로 문맥을 반영한 답변 생성 |
-| **두 단계 응답** | 규칙 기반 초기 triage·문진 안내를 먼저 전달한 뒤, 상세 답변을 SSE로 스트리밍 |
-| **지침 최신성 관리** | 문서 연도에 따른 검색 범위 필터와 최신 지침 우선 정렬, 반영 기준 조회 |
-| **대화 문맥 유지** | 세션별 최근 대화 활용 및 사용자 대화 초기화 |
-| **관리자 지침 관리** | 인증된 관리자의 PDF·HWPX·TXT·MD 업로드, 색인 반영 및 처리 이력 조회 |
-| **상태 확인과 설정** | 모델·검색 엔진 상태 조회와 허용된 답변 모델 설정 변경 |
+| **지침 기반 정보 안내** | Jina 임베딩과 Qdrant로 관련 지침을 검색하고 Gemini로 답변 생성 |
+| **단계별 응답** | 규칙 기반 초기 안내를 먼저 전달하고, 상세 답변을 SSE로 스트리밍 |
+| **대화 문맥 활용** | SQLite에 저장된 세션별 최근 질문·답변을 후속 질문에 반영하고 대화 초기화 지원 |
+| **지침 업로드** | 관리자 인증 후 PDF·HWPX·TXT·Markdown 파일을 검증·파싱·청킹하고 색인에 반영 |
+| **지침·설정 관리** | 업로드 처리 이력·모델 설정을 JSON으로 저장하고, 처리 이력 조회와 허용된 답변 모델 설정 변경 지원 |
+| **연도 조건 검색** | 문서의 연도 정보를 이용해 검색에 사용할 지침 범위 제한 |
 
-기능은 현재 소스 기준으로 정리했습니다. 초기 triage는 키워드 규칙에 따른 참고 정보이며, 임상적으로 검증된 진단·응급도 판정으로 해석해서는 안 됩니다.
+초기 안내는 코드에 정의된 질환·키워드 규칙을 사용합니다. 상세 답변은 검색된 지침 본문과 질문 문맥을 이용해 생성합니다.
 
 ## 시스템 아키텍처
 
+아래는 **현재 저장소 코드에서 확인한 구성 요소와 데이터 흐름**입니다.
+
 ```mermaid
 flowchart TB
-    User["사용자 · 실무자"] --> Web["React · Vite"]
-    Admin["관리자"] --> Web
-    Web <-->|"HTTP · SSE"| Proxy["Nginx"]
-    Proxy <--> API["FastAPI"]
+    Web["React · 사용자 / 관리자 화면"]
+    API["FastAPI · 사용자 / 관리자 API"]
+    Rule["규칙 기반 초기 안내"]
+    RAG["LangChain · 지침 검색 / 프롬프트 구성"]
+    Jina["Jina · 서버 임베딩"]
+    Qdrant[("Qdrant · 지침 검색 데이터")]
+    Chat[("SQLite · 임시 대화")]
+    Files[("JSON · 처리 이력 / 모델 설정")]
+    Gemini["Gemini API · 외부 답변 생성"]
+    Ingest["파일 검증 · 파싱 · 청킹"]
 
-    API --> Triage["초기 분류·문진"]
-    Triage -->|"선행 이벤트"| Web
-    API --> RAG["RAG · LangChain"]
-    RAG <-->|"지침 검색"| Search["Jina · Qdrant"]
-    RAG -->|"질문 · 검색 문맥"| LLM["Gemini API<br/>외부 서비스"]
-    LLM -->|"답변 스트림"| API
-    API <--> Conversation[("SQLite<br/>대화 문맥")]
-    API -->|"지침 업로드"| Parse["문서 파싱·청킹"]
-    Parse -->|"임베딩 · 색인"| Search
+    Web -->|"질문 / 관리자 요청 · HTTP"| API
+    API -->|"초기 안내 / 답변 · SSE"| Web
+    API --> Rule
+    Rule -->|"초기 안내 결과"| API
+    API <-->|"최근 대화 저장 / 조회"| Chat
+    API <-->|"업로드 이력 / 모델 설정"| Files
+    API --> RAG
+    RAG <-->|"질문 임베딩"| Jina
+    RAG <-->|"벡터 검색 / 지침 청크"| Qdrant
+    RAG -->|"질문 / 최근 대화 / 검색 본문"| Gemini
+    Gemini -->|"답변 청크"| API
+    API -->|"인증된 관리자 업로드"| Ingest
+    Ingest <-->|"문서 임베딩"| Jina
+    Ingest -->|"본문 / 메타데이터 / 벡터 적재"| Qdrant
 
-    classDef web fill:#edf5ff,stroke:#4d7aaa,color:#102a43
-    classDef core fill:#eefbf6,stroke:#3e8b75,color:#14392f
-    classDef external fill:#fff6e8,stroke:#b58742,color:#5b3e19
-    class Web,Proxy web
-    class API,RAG,Search,Triage,Parse,Conversation core
-    class LLM external
+    classDef screen fill:#edf5ff,stroke:#527ca5,color:#15324d
+    classDef service fill:#eef8f4,stroke:#4e8b77,color:#193e31
+    classDef storage fill:#f4f2fc,stroke:#8471b4,color:#352a52
+    classDef external fill:#fff5e7,stroke:#b48a4e,color:#59401d
+    class Web screen
+    class API,Rule,RAG,Jina,Ingest service
+    class Qdrant,Chat,Files storage
+    class Gemini external
 ```
 
-**질문 흐름:** 초기 분류 안내 → 지침 검색 → 최근 대화와 검색 근거를 반영한 답변 생성 → 스트리밍 전달.
+**질문 처리:** 질문과 최근 대화 조회 → 규칙 기반 초기 안내 → 지침 검색 → 프롬프트 구성 → Gemini 답변 생성 → SSE 전달 → 정상 완료된 대화 저장.
 
-**지침 반영 흐름:** 관리자 업로드 → 파일 검증·파싱·청킹 → 로컬 임베딩 → Qdrant 색인 → 반영 이력 기록.
+**지침 반영:** 관리자 인증 → 업로드 파일 검증 → 파싱·청킹 → Jina 임베딩 → Qdrant 적재 → JSON 처리 이력 기록 → 임시 파일 정리.
 
-임베딩·검색·대화 저장은 로컬 구성에서 수행하며, 답변 생성에는 외부 Gemini API를 사용합니다. 위 그림은 논리적 구성도입니다.
+| 구성 | 역할 |
+| :--- | :--- |
+| **React** | 사용자 질문·답변 화면과 관리자 화면, API 호출·스트리밍 표시 |
+| **FastAPI** | 사용자·관리자 요청 처리, 초기 안내와 검색·생성 흐름 연결 |
+| **Jina** | 백엔드 서버에서 질문·지침 텍스트를 벡터로 변환 |
+| **Qdrant** | 지침 청크의 본문·메타데이터·벡터 저장과 검색 |
+| **SQLite** | 세션별 임시 대화 저장과 최근 문맥 조회 |
+| **JSON** | 업로드 처리 이력과 관리자 모델 설정 저장 |
+| **Gemini API** | 질문·최근 대화·검색된 지침 본문을 받아 외부에서 답변 생성 |
+| **ngrok** | 위 서비스 주소를 통한 외부 HTTPS 접속 경로 |
+
+Qdrant와 SQLite는 용도가 다른 저장소이며 함께 사용합니다. 대화의 기본 보존 기간은 24시간으로 설정되어 있고 만료 기록을 정리합니다. 답변 생성에 필요한 질문·최근 대화·검색 본문은 외부 Gemini API에 전달됩니다.
+
+구성도는 컴포넌트 사이의 논리적 관계를 나타냅니다. 특정 장비·내부 주소·포트·프록시 배치를 가정한 배포도는 아닙니다.
 
 ## 기술 스택
 
 | 영역 | 기술 |
 | :--- | :--- |
-| **Frontend** | JavaScript, React, Vite, React Router, React Markdown |
-| **Backend** | Python, FastAPI, Uvicorn, Pydantic |
-| **검색·AI** | LangChain, Jina Embeddings, Sentence Transformers, PyTorch, Qdrant, Gemini API |
-| **데이터·문서** | SQLite, JSON, PDF·HWPX·TXT·Markdown 처리 |
-| **실행·품질 관리** | Docker Compose, Nginx, pytest, GitHub Actions |
+| **화면** | JavaScript, React, Vite, React Router, React Markdown |
+| **API** | Python, FastAPI, Uvicorn, Pydantic, SSE |
+| **검색·임베딩** | LangChain, Jina Embeddings, Sentence Transformers, PyTorch, Qdrant |
+| **대화·설정·이력** | SQLite, JSON |
+| **답변 생성** | Gemini API |
+| **접속·실행 구성** | ngrok, Docker Compose·Nginx 구성 파일 |
+| **검증 도구** | pytest, GitHub Actions |
 
 ## 팀 구성
 
@@ -89,58 +124,49 @@ flowchart TB
 | **Project Manager (PM)** | 장재원 |
 | **멘토** | 홍성석 |
 
-## 코드 저장소
+## 저장소와 문서
 
-| 저장소 | 역할 | 공개 범위 |
+| 저장소 | 책임 | 공개 범위 |
 | :--- | :--- | :--- |
-| [**frontend**](https://github.com/BootCampEW/frontend) | React 사용자·관리자 화면, API 연동 및 스트리밍 표시 | Private |
-| [**backend**](https://github.com/BootCampEW/backend) | FastAPI, RAG, 지침 처리, 대화·이력 서비스 및 테스트 | Private |
+| [**frontend**](https://github.com/BootCampEW/frontend) | React 사용자·관리자 화면과 API·SSE 연동 | Private |
+| [**backend**](https://github.com/BootCampEW/backend) | FastAPI, RAG, 지침 처리, 대화·설정·이력 서비스 | Private |
 | [**.github**](https://github.com/BootCampEW/.github) | 공개 조직 프로필과 소개 자산 | Public |
 
-소스 저장소와 내부 문서는 접근 권한이 있는 구성원만 열람할 수 있습니다. 이 페이지는 프로젝트의 목적과 구조를 소개하는 공개 문서입니다.
-
-## 문서 구조
-
-**제품 정의 → 요구사항 → 아키텍처 → API → 운영** 순서로 읽는 것을 권장합니다. 아래 링크는 비공개 `backend` 저장소의 현재 문서로 연결됩니다.
+소스와 내부 문서는 접근 권한이 있는 구성원만 열람할 수 있습니다.
 
 | 문서 | 내용 |
 | :--- | :--- |
-| [PRD.md](https://github.com/BootCampEW/backend/blob/main/docs/PRD.md) | 목적, 사용자, 제공 범위와 인수 기준 |
-| [REQUIREMENTS.md](https://github.com/BootCampEW/backend/blob/main/docs/REQUIREMENTS.md) | 기능·비기능 요구사항과 확인 방법 |
-| [APP_ARCHITECTURE.md](https://github.com/BootCampEW/backend/blob/main/docs/APP_ARCHITECTURE.md) | 컴포넌트 책임과 데이터 흐름 |
+| [PRD.md](https://github.com/BootCampEW/backend/blob/main/docs/PRD.md) | 프로젝트 목적·사용자·제공 범위 |
+| [REQUIREMENTS.md](https://github.com/BootCampEW/backend/blob/main/docs/REQUIREMENTS.md) | 기능·비기능 요구사항 |
+| [APP_ARCHITECTURE.md](https://github.com/BootCampEW/backend/blob/main/docs/APP_ARCHITECTURE.md) | 내부 애플리케이션 구조 문서 |
 | [API_SPEC.md](https://github.com/BootCampEW/backend/blob/main/docs/API_SPEC.md) | 요청·응답과 SSE 계약 |
-| OPERATIONS.md | 구성원용 실행·유지보수 안내 |
-| docs-manifest.json | 문서 변경 검증 기준 |
+| OPERATIONS.md | 구성원용 실행·운영 안내 |
+| docs-manifest.json | 문서 해시 목록 |
 
-별도 보관된 개발 자료에는 **RAG·임베딩 모델 연구, CDSS 전환 전략, 라우터·배포 경계 가이드, API 설계 학습, 날짜별 작업 기록**이 있습니다. 공개 프로필에는 이 자료들의 목적과 개발 흐름을 요약했습니다.
-
-최신 제품·API 문서와 실제 코드를 현재 구현의 기준으로 사용하며, 과거 연구의 모델·성능 수치나 배포 구성은 현행 동작을 보장하는 근거로 사용하지 않습니다.
+이 페이지의 아키텍처는 현재 `frontend`·`backend` 코드에 대조해 작성한 공개 소개입니다. 내부 문서에는 제품·요구사항·API·운영에 관한 상세 개발 자료가 있습니다.
 
 ## 개발 이력
 
-| 시기 | 주요 변화 |
+| 시점 | 확인한 내용 |
 | :--- | :--- |
-| **초기 설계·연구** | 지침 기반 챗봇 설계, 벡터 검색과 임베딩 모델 비교, Qdrant·Gemini 활용 검토 |
-| **2026.09** | CDSS 참고 도구 방향 구체화, 초기 분류와 상세 답변을 나누는 두 단계 응답, 지침 업로드 반영 기능 개발 |
-| **2026.10 초** | 사용자·관리자 라우터와 RAG·서비스 계층 분리, 지침 최신성·반영 이력·대화 문맥 관리 보완 |
-| **2026.10.16** | FE/BE 책임과 API 경계, 로컬 실행 및 검증 절차 정리 |
-| **2026.10.17** | React 화면과 FastAPI 코드의 저장소 반영, 화면·API 계약 점검 및 후속 과제 정리 |
+| **2026.10.17** | frontend의 React 화면과 backend의 FastAPI·RAG·서비스 코드가 main에 반영 |
+| **2026.10.18** | 공개 프로필의 시스템 아키텍처·저장소별 역할·기술 스택을 재정리하고 서비스 링크 추가 |
 
 ## 향후 과제
 
-- **검색과 답변 품질:** 감염병 질문 평가셋을 구성하고, 근거 적합성·최신성·불확실성 표현을 검증합니다.
-- **분류 안내의 의미:** 법정감염병 분류와 응급도를 구분하고, 초기 카드와 상세 답변의 일관성을 점검합니다.
-- **화면·API 계약:** 지침 상태, 빠른 선택 목록, 관리자 응답 필드와 빈 결과·취소·오류 표시를 지속적으로 검증합니다.
-- **데이터 신뢰성:** 테스트 데이터와 실제 지침 이력을 분리하고, 원문·메타데이터·색인의 일치 검증을 강화합니다.
-- **재현 가능한 개발:** 계약·인증·업로드·세션 보존 테스트와 화면 검증을 보완하고, 문서와 코드의 변경을 함께 관리합니다.
+- **안내 품질:** 검색 결과와 생성 답변이 지침 내용에 맞는지 평가하고 질문·오류 사례를 정리합니다.
+- **출처 연결:** 답변에 사용한 원문·페이지·개정 정보를 사용자가 확인할 수 있도록 보완합니다.
+- **데이터 정합성:** 업로드 처리 이력과 실제 Qdrant 색인의 일치를 확인합니다.
+- **문서 정비:** 분리 저장소 기준으로 실행 경로·배포 설명·API 문서를 맞춥니다.
+- **공개 준비:** 소스 공개 전 파일·Git 이력과 자료·모델·표시물의 재사용 조건을 검토합니다.
 
 ---
 
 <div align="center">
 
 **BootCampEW · Infection QA**  
-지침을 찾고, 근거를 확인하고, 전문가의 판단을 지원합니다.
+지침을 검색하고, 감염병 정보를 안내합니다.
 
-<sub>프로젝트 소개 기준: 2026-10-17</sub>
+<sub>소개 기준: 2026-10-18 · 현재 저장소 코드 및 서비스 화면 확인</sub>
 
 </div>
