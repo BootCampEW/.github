@@ -46,43 +46,41 @@
 
 아래는 **현재 저장소 코드에서 확인한 구성 요소와 데이터 흐름**입니다.
 
+**1. 질문·답변 구조**
+
 ```mermaid
 flowchart TB
-    Web["React · 사용자 / 관리자 화면"]
-    API["FastAPI · 사용자 / 관리자 API"]
-    Rule["규칙 기반 초기 안내"]
-    RAG["LangChain · 지침 검색 / 프롬프트 구성"]
-    Jina["Jina · 서버 임베딩"]
-    Qdrant[("Qdrant · 지침 검색 데이터")]
-    Chat[("SQLite · 임시 대화")]
-    Files[("JSON · 처리 이력 / 모델 설정")]
-    Gemini["Gemini API · 외부 답변 생성"]
-    Ingest["파일 검증 · 파싱 · 청킹"]
-
-    Web -->|"질문 / 관리자 요청 · HTTP"| API
-    API -->|"초기 안내 / 답변 · SSE"| Web
-    API --> Rule
-    Rule -->|"초기 안내 결과"| API
-    API <-->|"최근 대화 저장 / 조회"| Chat
-    API <-->|"업로드 이력 / 모델 설정"| Files
-    API --> RAG
-    RAG <-->|"질문 임베딩"| Jina
-    RAG <-->|"벡터 검색 / 지침 청크"| Qdrant
-    RAG -->|"질문 / 최근 대화 / 검색 본문"| Gemini
+    Web["React<br/>사용자 화면"] <-->|"HTTP 요청 · SSE 응답"| API["FastAPI<br/>질의 API"]
+    API <-->|"최근 대화"| Chat[("SQLite<br/>임시 대화")]
+    API --> Rule["규칙 기반<br/>초기 안내"]
+    API --> RAG["LangChain<br/>지침 검색·프롬프트"]
+    RAG <-->|"질문 임베딩"| Jina["Jina"]
+    RAG <-->|"지침 검색"| Qdrant[("Qdrant<br/>지침 청크·벡터")]
+    RAG -->|"질문·대화·검색 본문"| Gemini["Gemini API<br/>외부 답변 생성"]
     Gemini -->|"답변 청크"| API
-    API -->|"인증된 관리자 업로드"| Ingest
-    Ingest <-->|"문서 임베딩"| Jina
-    Ingest -->|"본문 / 메타데이터 / 벡터 적재"| Qdrant
-
-    classDef screen fill:#edf5ff,stroke:#527ca5,color:#15324d
-    classDef service fill:#eef8f4,stroke:#4e8b77,color:#193e31
-    classDef storage fill:#f4f2fc,stroke:#8471b4,color:#352a52
-    classDef external fill:#fff5e7,stroke:#b48a4e,color:#59401d
-    class Web screen
-    class API,Rule,RAG,Jina,Ingest service
-    class Qdrant,Chat,Files storage
-    class Gemini external
 ```
+
+초기 안내와 Gemini 답변은 FastAPI가 사용자 화면으로 전달합니다. Jina는 텍스트를 벡터로 바꾸고, Qdrant는 관련 지침을 검색합니다.
+
+**2. 관리자 지침 업로드 처리 순서**
+
+```mermaid
+flowchart TB
+    Admin["React · 관리자 화면"]
+    Upload["FastAPI · 관리자 인증<br/>파일 검증·파싱·청킹"]
+    Embed["Jina · 문서 임베딩"]
+    Index[("Qdrant<br/>지침 청크·메타데이터·벡터")]
+    History[("JSON<br/>업로드 처리 이력")]
+    Cleanup["임시 업로드 파일 정리"]
+
+    Admin -->|"파일 업로드"| Upload
+    Upload --> Embed
+    Embed -->|"문서 벡터와 청크"| Index
+    Index -->|"적재 후 FastAPI가 기록"| History
+    History --> Cleanup
+```
+
+두 번째 도표의 화살표는 업로드 처리 순서입니다. Qdrant가 JSON 파일을 직접 쓰는 구조가 아니라 FastAPI의 업로드 처리 코드가 이력을 기록하고 임시 파일을 정리합니다. 관리자 모델 설정도 별도 JSON 파일에 저장합니다.
 
 **질문 처리:** 질문과 최근 대화 조회 → 규칙 기반 초기 안내 → 지침 검색 → 프롬프트 구성 → Gemini 답변 생성 → SSE 전달 → 정상 완료된 대화 저장.
 
